@@ -1,0 +1,28 @@
+[project]
+name = "jackery-hyxi-ha"
+version = "0.0.1"
+description = "Local-only Home Assistant integrations for Jackery SolarVault, Smart Meter 1P, and HYXi DMU"
+license = { text = "MIT" }
+requires-python = ">=3.14"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+addopts = "-q --strict-markers"
+norecursedirs = [".venv", "custom_components/jackery_ble/tools"]
+filterwarnings = [
+    "ignore::DeprecationWarning:pytest_homeassistant_custom_component",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py314"
+extend-exclude = [".venv", "custom_components/jackery_ble/tools"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["custom_components"]

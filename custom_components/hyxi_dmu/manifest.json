@@ -1,0 +1,12 @@
+{
+  "domain": "hyxi_dmu",
+  "name": "Hyxi DMU",
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/",
+  "integration_type": "hub",
+  "iot_class": "local_push",
+  "requirements": [],
+  "version": "0.3.0"
+}

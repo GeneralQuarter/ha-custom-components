@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Hyxi DMU",
+        "description": "Enter the DMU's LAN address (give it a DHCP reservation). The local password is the one set in the HYXiPOWER app; the DMU currently accepts any value, but it must be sent to unlock the data channel.",
+        "data": {
+          "host": "Host or IP address",
+          "password": "Local password"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Hyxi DMU",
+        "description": "Update the DMU's LAN address or local password. The new address is checked on port 333 before the entry is reloaded.",
+        "data": {
+          "host": "Host or IP address",
+          "password": "Local password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the DMU on port 333."
+    },
+    "abort": {
+      "already_configured": "This DMU is already configured."
+    }
+  },
+  "entity": {
+    "button": {
+      "restart": {
+        "name": "Restart"
+      },
+      "reset_energy_stats": {
+        "name": "Reset energy statistics"
+      }
+    },
+    "sensor": {
+      "power": {
+        "name": "Power"
+      },
+      "energy": {
+        "name": "Energy"
+      },
+      "microinverter_power": {
+        "name": "Microinverter power"
+      },
+      "microinverter_energy": {
+        "name": "Microinverter energy"
+      }
+    }
+  }
+}

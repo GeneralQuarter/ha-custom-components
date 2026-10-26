@@ -1,0 +1,192 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Jackery BLE",
+        "description": "Pick the Jackery device to set up.",
+        "data": {
+          "address": "Device"
+        }
+      },
+      "encryption_key": {
+        "data": {
+          "device_encryption_key": "Encryption Key (base64)"
+        },
+        "description": "The sensor data is encrypted. In order to decrypt it we need a base64 encryption key"
+      }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "invalid_key": "The key must be base64 for 16, 24 or 32 bytes",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "no_devices_found": "No supported devices found",
+      "not_supported": "This device is not supported"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Jackery BLE options",
+        "description": "The follow-meter supervisor decides whether the battery may discharge and publishes the vault's own output ceiling on the active discharge plan. It keeps a reserve above the device's discharge floor; below that reserve the plan is capped to 0 W and the house is served by PV and the grid.",
+        "data": {
+          "supervisor_enabled": "Enable follow-meter supervisor",
+          "reserve_percent": "Reserve above the discharge floor (%)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "soc": {
+        "name": "State of charge"
+      },
+      "batSoc": {
+        "name": "Battery BMS SOC (diagnostic)"
+      },
+      "swEpsInPw": {
+        "name": "Emergency Power Supply input"
+      },
+      "swEpsOutPw": {
+        "name": "Emergency Power Supply output"
+      },
+      "cellTemp": {
+        "name": "Battery temperature"
+      },
+      "inGridSidePw": {
+        "name": "Grid import (vault estimate)"
+      },
+      "outGridSidePw": {
+        "name": "Grid export (vault estimate)"
+      },
+      "vaultOutputPw": {
+        "name": "Vault output (estimated)"
+      },
+      "energyPlanPw": {
+        "name": "Published discharge cap"
+      },
+      "socDischgLimit": {
+        "name": "Discharge floor"
+      },
+      "batInPw": {
+        "name": "Battery charge"
+      },
+      "batOutPw": {
+        "name": "Battery discharge"
+      },
+      "stackInPw": {
+        "name": "Stack charge"
+      },
+      "stackOutPw": {
+        "name": "Stack discharge"
+      },
+      "pvPw": {
+        "name": "Solar panels generation"
+      },
+      "pv1_pvPw": {
+        "name": "Solar panel 1 generation"
+      },
+      "pv2_pvPw": {
+        "name": "Solar panel 2 generation"
+      },
+      "pv3_pvPw": {
+        "name": "Solar panel 3 generation"
+      },
+      "pv4_pvPw": {
+        "name": "Solar panel 4 generation"
+      },
+      "batChgEgy": {
+        "name": "Battery charge (total)"
+      },
+      "batDisChgEgy": {
+        "name": "Battery discharge (total)"
+      },
+      "inOngridEgy": {
+        "name": "Grid import (total)"
+      },
+      "outOngridEgy": {
+        "name": "Grid output (total)"
+      },
+      "inEpsEgy": {
+        "name": "Emergency Power Supply input (total)"
+      },
+      "outEpsEgy": {
+        "name": "Emergency Power Supply output (total)"
+      },
+      "pvEgy": {
+        "name": "Solar panels generation (total)"
+      },
+      "pv1Egy": {
+        "name": "Solar panel 1 generation (total)"
+      },
+      "pv2Egy": {
+        "name": "Solar panel 2 generation (total)"
+      },
+      "pv3Egy": {
+        "name": "Solar panel 3 generation (total)"
+      },
+      "pv4Egy": {
+        "name": "Solar panel 4 generation (total)"
+      },
+      "acOtBatEgy": {
+        "name": "AC to Battery (total)"
+      },
+      "acOtOngridEgy": {
+        "name": "AC to Grid (total)"
+      },
+      "pvOtBatEgy": {
+        "name": "Solar panels to Battery (total)"
+      },
+      "pvOtAcEgy": {
+        "name": "Solar panels to AC (total)"
+      },
+      "pvOtOngridEgy": {
+        "name": "Solar panels to Grid (total)"
+      },
+      "ongridOtAcLoadEgy": {
+        "name": "Grid to AC Loads (total)"
+      },
+      "batOtAcEgy": {
+        "name": "Battery to AC (total)"
+      },
+      "batOtGridEgy": {
+        "name": "Battery to Grid (total)"
+      },
+      "ongridOtBatEgy": {
+        "name": "Grid to Battery (total)"
+      },
+      "volt": {
+        "name": "Grid voltage"
+      },
+      "curr": {
+        "name": "Grid current"
+      },
+      "power": {
+        "name": "Grid power"
+      },
+      "rep": {
+        "name": "Grid reactive power"
+      },
+      "freq": {
+        "name": "Grid frequency"
+      },
+      "fact": {
+        "name": "Grid power factor"
+      },
+      "ap": {
+        "name": "Grid apparent power"
+      }
+    },
+    "number": {
+      "socChgLimit": {
+        "name": "Maximum state of charge"
+      },
+      "socDischgLimit": {
+        "name": "Minimum state of charge"
+      }
+    }
+  }
+}

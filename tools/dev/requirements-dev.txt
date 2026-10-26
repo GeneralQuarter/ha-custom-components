@@ -1,0 +1,8 @@
+# Matches Home Assistant 2026.10.2, the version running on the production VM.
+# Check with: python -c "import importlib.metadata as m; print(m.requires('pytest-homeassistant-custom-component'))"
+pytest-homeassistant-custom-component==0.13.373
+pytest-asyncio
+cryptography
+ruff
+# Pulled in by homeassistant.components.usb, which components.bluetooth imports.
+serialx==1.14.0

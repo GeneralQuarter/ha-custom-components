@@ -1,0 +1,32 @@
+# Python tooling
+.venv/
+.venv-probe/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Secrets: device addresses and BLE keys, never commit
+custom_components/jackery_ble/tools/devices.json
+custom_components/jackery_ble/tools/logs/
+custom_components/hyxi_dmu/docs/firmware-mqtt-disasm.md
+
+# Vendor brand assets are not distributed
+custom_components/*/brand/
+
+# Component development notes stay local
+custom_components/*/docs/
+
+# Local captures and binaries
+*.log
+*.pcap
+*.bin
+*.apk
+*.bak-*
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db

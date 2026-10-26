@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Hyxi DMU",
+        "description": "Saisissez l'adresse LAN du DMU (réservez-lui une adresse DHCP). Le mot de passe local est celui défini dans l'application HYXiPOWER ; le DMU accepte actuellement n'importe quelle valeur, mais il doit être envoyé pour déverrouiller le canal de données.",
+        "data": {
+          "host": "Hôte ou adresse IP",
+          "password": "Mot de passe local"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurer le Hyxi DMU",
+        "description": "Mettez à jour l'adresse LAN ou le mot de passe local du DMU. La nouvelle adresse est vérifiée sur le port 333 avant le rechargement de l'entrée.",
+        "data": {
+          "host": "Hôte ou adresse IP",
+          "password": "Mot de passe local"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de joindre le DMU sur le port 333."
+    },
+    "abort": {
+      "already_configured": "Ce DMU est déjà configuré."
+    }
+  },
+  "entity": {
+    "button": {
+      "restart": {
+        "name": "Redémarrer"
+      },
+      "reset_energy_stats": {
+        "name": "Réinitialiser les statistiques d'énergie"
+      }
+    },
+    "sensor": {
+      "power": {
+        "name": "Puissance"
+      },
+      "energy": {
+        "name": "Énergie"
+      },
+      "microinverter_power": {
+        "name": "Puissance des micro-onduleurs"
+      },
+      "microinverter_energy": {
+        "name": "Énergie des micro-onduleurs"
+      }
+    }
+  }
+}

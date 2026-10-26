@@ -1,0 +1,192 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Jackery BLE",
+        "description": "Sélectionnez l'appareil Jackery à configurer.",
+        "data": {
+          "address": "Appareil"
+        }
+      },
+      "encryption_key": {
+        "data": {
+          "device_encryption_key": "Clé de chiffrement (base64)"
+        },
+        "description": "Les données des capteurs sont chiffrées. Pour les déchiffrer, nous avons besoin d'une clé de chiffrement encodée en base64."
+      }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "invalid_key": "La clé doit être encodée en base64 et faire 16, 24 ou 32 octets.",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "no_devices_found": "Aucun appareil compatible trouvé.",
+      "not_supported": "Cet appareil n'est pas pris en charge."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options Jackery BLE",
+        "description": "Le superviseur de suivi du compteur décide si la batterie peut se décharger et publie le plafond de sortie du SolarVault sur le plan de décharge actif. Il maintient une réserve au-dessus du seuil de décharge de l'appareil ; en dessous de cette réserve, le plan est plafonné à 0 W et la maison est alimentée par le solaire et le réseau.",
+        "data": {
+          "supervisor_enabled": "Activer le superviseur de suivi du compteur",
+          "reserve_percent": "Réserve au-dessus du seuil de décharge (%)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "soc": {
+        "name": "État de charge"
+      },
+      "batSoc": {
+        "name": "État de charge BMS de la batterie (diagnostic)"
+      },
+      "swEpsInPw": {
+        "name": "Entrée de l'alimentation de secours"
+      },
+      "swEpsOutPw": {
+        "name": "Sortie de l'alimentation de secours"
+      },
+      "cellTemp": {
+        "name": "Température de la batterie"
+      },
+      "inGridSidePw": {
+        "name": "Import réseau (estimation du SolarVault)"
+      },
+      "outGridSidePw": {
+        "name": "Export réseau (estimation du SolarVault)"
+      },
+      "vaultOutputPw": {
+        "name": "Puissance de sortie du SolarVault (estimée)"
+      },
+      "energyPlanPw": {
+        "name": "Plafond de décharge publié"
+      },
+      "socDischgLimit": {
+        "name": "Seuil de décharge"
+      },
+      "batInPw": {
+        "name": "Charge de la batterie"
+      },
+      "batOutPw": {
+        "name": "Décharge de la batterie"
+      },
+      "stackInPw": {
+        "name": "Charge du parc de batteries"
+      },
+      "stackOutPw": {
+        "name": "Décharge du parc de batteries"
+      },
+      "pvPw": {
+        "name": "Production des panneaux solaires"
+      },
+      "pv1_pvPw": {
+        "name": "Production du panneau solaire 1"
+      },
+      "pv2_pvPw": {
+        "name": "Production du panneau solaire 2"
+      },
+      "pv3_pvPw": {
+        "name": "Production du panneau solaire 3"
+      },
+      "pv4_pvPw": {
+        "name": "Production du panneau solaire 4"
+      },
+      "batChgEgy": {
+        "name": "Charge de la batterie (total)"
+      },
+      "batDisChgEgy": {
+        "name": "Décharge de la batterie (total)"
+      },
+      "inOngridEgy": {
+        "name": "Import réseau (total)"
+      },
+      "outOngridEgy": {
+        "name": "Export réseau (total)"
+      },
+      "inEpsEgy": {
+        "name": "Entrée de l'alimentation de secours (total)"
+      },
+      "outEpsEgy": {
+        "name": "Sortie de l'alimentation de secours (total)"
+      },
+      "pvEgy": {
+        "name": "Production des panneaux solaires (total)"
+      },
+      "pv1Egy": {
+        "name": "Production du panneau solaire 1 (total)"
+      },
+      "pv2Egy": {
+        "name": "Production du panneau solaire 2 (total)"
+      },
+      "pv3Egy": {
+        "name": "Production du panneau solaire 3 (total)"
+      },
+      "pv4Egy": {
+        "name": "Production du panneau solaire 4 (total)"
+      },
+      "acOtBatEgy": {
+        "name": "AC vers batterie (total)"
+      },
+      "acOtOngridEgy": {
+        "name": "AC vers réseau (total)"
+      },
+      "pvOtBatEgy": {
+        "name": "Panneaux solaires vers batterie (total)"
+      },
+      "pvOtAcEgy": {
+        "name": "Panneaux solaires vers AC (total)"
+      },
+      "pvOtOngridEgy": {
+        "name": "Panneaux solaires vers réseau (total)"
+      },
+      "ongridOtAcLoadEgy": {
+        "name": "Réseau vers charges AC (total)"
+      },
+      "batOtAcEgy": {
+        "name": "Batterie vers AC (total)"
+      },
+      "batOtGridEgy": {
+        "name": "Batterie vers réseau (total)"
+      },
+      "ongridOtBatEgy": {
+        "name": "Réseau vers batterie (total)"
+      },
+      "volt": {
+        "name": "Tension réseau"
+      },
+      "curr": {
+        "name": "Courant réseau"
+      },
+      "power": {
+        "name": "Puissance réseau"
+      },
+      "rep": {
+        "name": "Puissance réactive réseau"
+      },
+      "freq": {
+        "name": "Fréquence réseau"
+      },
+      "fact": {
+        "name": "Facteur de puissance réseau"
+      },
+      "ap": {
+        "name": "Puissance apparente réseau"
+      }
+    },
+    "number": {
+      "socChgLimit": {
+        "name": "État de charge maximal"
+      },
+      "socDischgLimit": {
+        "name": "État de charge minimal"
+      }
+    }
+  }
+}

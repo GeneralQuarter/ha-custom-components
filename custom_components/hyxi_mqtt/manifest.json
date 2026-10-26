@@ -1,0 +1,8 @@
+{
+  "domain": "hyxi_mqtt",
+  "name": "Hyxi DMU local MQTT broker",
+  "codeowners": [],
+  "documentation": "https://github.com/",
+  "iot_class": "local_push",
+  "version": "0.3.0"
+}

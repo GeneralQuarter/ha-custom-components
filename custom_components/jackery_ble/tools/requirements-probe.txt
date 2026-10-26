@@ -1,0 +1,4 @@
+bleak>=0.22
+bleak-esphome>=4.1
+habluetooth>=3.0
+cryptography>=42
