@@ -26,7 +26,7 @@ def _enable_hyxi_custom_integration(enable_custom_integrations: None) -> None:
     """Allow loading ``custom_components`` when this file runs without conftest."""
 
 
-def _upload_frame() -> bytes:
+def _upload_frame(energy: int = 61479, power: int = 665) -> bytes:
     entry = p._field(
         1, 2, p._field(1, 0, SN) + p._field(7, 0, 1000)
     ) + p._field(
@@ -34,8 +34,8 @@ def _upload_frame() -> bytes:
         2,
         p._field(1, 0, 1)
         + p._field(2, 0, 320)
-        + p._field(4, 0, 665)
-        + p._field(5, 0, 61479),
+        + p._field(4, 0, power)
+        + p._field(5, 0, energy),
     )
     body = p._field(7, 2, entry)
     payload = (
@@ -87,6 +87,54 @@ async def test_push_event_updates_the_coordinator(
     assert coordinator.data[0].power_w == 66.5
     assert coordinator.data[0].energy_kwh == 614.79
     assert hass.states.get("sensor.hyxi_dmu_microinverter_energy").state == "614.79"
+
+
+async def test_sleeping_inverter_zero_does_not_reset_lifetime_energy(
+    hass: HomeAssistant, monkeypatch
+) -> None:
+    """The DMU reports energy 0 at night; that must not look like a reset."""
+    monkeypatch.setattr(
+        "custom_components.hyxi_dmu.coordinator.HyxiDmuCoordinator._async_update_data",
+        AsyncMock(return_value=[]),
+    )
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title=f"Hyxi DMU ({HOST})",
+        unique_id=HOST,
+        data={CONF_HOST: HOST, CONF_PASSWORD: PASSWORD},
+    )
+    entry.add_to_hass(hass)
+
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    hass.bus.async_fire(
+        EVENT_PUSH,
+        {"sn": "60101252400000", "payload": _upload_frame().hex()},
+    )
+    await hass.async_block_till_done()
+
+    inverter_energy = next(
+        state.entity_id
+        for state in hass.states.async_all("sensor")
+        if "234567" in state.entity_id and state.entity_id.endswith("_energy")
+    )
+    assert hass.states.get(inverter_energy).state == "614.79"
+
+    hass.bus.async_fire(
+        EVENT_PUSH,
+        {
+            "sn": "60101252400000",
+            "payload": _upload_frame(energy=0, power=0).hex(),
+        },
+    )
+    await hass.async_block_till_done()
+
+    coordinator = entry.runtime_data
+    assert coordinator.data[0].power_w == 0.0
+    assert coordinator.data[0].energy_kwh == 614.79
+    assert hass.states.get("sensor.hyxi_dmu_microinverter_energy").state == "614.79"
+    assert hass.states.get(inverter_energy).state == "614.79"
 
 
 async def test_malformed_push_is_ignored(hass: HomeAssistant, monkeypatch) -> None:

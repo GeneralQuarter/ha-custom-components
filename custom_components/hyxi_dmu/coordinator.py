@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from contextlib import suppress
+from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
 
@@ -118,6 +119,33 @@ class HyxiDmuCoordinator(DataUpdateCoordinator[list[InverterReading]]):
         self.host = host
         self.password = password
 
+    @staticmethod
+    def _merge_reading(
+        previous: InverterReading, reading: InverterReading
+    ) -> InverterReading:
+        """Keep a lifetime counter monotonic while taking live power from the push.
+
+        At night the DMU reports every MPPT with ``energy=0`` even though the
+        inverter is the same unit.  Passing that through would make the Energy
+        dashboard treat the next morning's total as a counter reset and add the
+        whole lifetime again.
+        """
+        previous_mppts = {mppt.index: mppt for mppt in previous.mppts}
+        mppts = []
+        seen: set[int] = set()
+        for mppt in reading.mppts:
+            seen.add(mppt.index)
+            old = previous_mppts.get(mppt.index)
+            if old is not None and mppt.energy_kwh < old.energy_kwh:
+                mppt = replace(mppt, energy_kwh=old.energy_kwh)
+            mppts.append(mppt)
+        for index, old in previous_mppts.items():
+            if index not in seen:
+                # The inverter omitted this MPPT: keep its lifetime energy but
+                # do not keep the stale power reading.
+                mppts.append(replace(old, power_w=0.0, voltage_v=None))
+        return replace(reading, mppts=tuple(mppts))
+
     def async_apply_push(self, readings: list[InverterReading]) -> None:
         """Publish one pushed snapshot, retaining inverters it omitted.
 
@@ -127,7 +155,13 @@ class HyxiDmuCoordinator(DataUpdateCoordinator[list[InverterReading]]):
         if not readings:
             return
         merged = {reading.sn: reading for reading in self.data or []}
-        merged.update({reading.sn: reading for reading in readings})
+        for reading in readings:
+            previous = merged.get(reading.sn)
+            merged[reading.sn] = (
+                reading
+                if previous is None
+                else self._merge_reading(previous, reading)
+            )
         self.async_set_updated_data(list(merged.values()))
 
     async def _restart_once(self) -> None:

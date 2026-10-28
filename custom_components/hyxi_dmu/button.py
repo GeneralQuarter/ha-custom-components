@@ -6,13 +6,12 @@ from homeassistant.components.button import ButtonDeviceClass, ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.recorder import DATA_INSTANCE
 
 from .const import DOMAIN
 from .coordinator import HyxiDmuCoordinator
-
-TOTAL_ENERGY = "sensor.hyxi_dmu_microinverter_energy"
 
 
 class _DmuButton(ButtonEntity):
@@ -22,6 +21,7 @@ class _DmuButton(ButtonEntity):
 
     def __init__(self, entry: ConfigEntry) -> None:
         """Constructor."""
+        self._entry = entry
         self._attr_device_info = {
             "identifiers": {(DOMAIN, entry.entry_id)},
             "name": "Hyxi DMU",
@@ -57,11 +57,29 @@ class DmuResetEnergyButton(_DmuButton):
     _attr_icon = "mdi:delete-sweep"
 
     async def async_press(self) -> None:
-        """Clear the microinverter energy statistics so the dashboard can rebuild."""
+        """Clear the lifetime energy statistics so the dashboard can rebuild."""
         recorder = self.hass.data.get(DATA_INSTANCE)
         if recorder is None:
             raise HomeAssistantError("Recorder is not available")
-        recorder.async_clear_statistics([TOTAL_ENERGY])
+
+        registry = er.async_get(self.hass)
+        coordinator: HyxiDmuCoordinator = self._entry.runtime_data
+        unique_ids = {f"{self._entry.entry_id}_microinverter_energy"}
+        unique_ids.update(
+            f"{inverter.sn}_energy" for inverter in coordinator.data or []
+        )
+        statistic_ids = [
+            entity_id
+            for unique_id in unique_ids
+            if (
+                entity_id := registry.async_get_entity_id(
+                    "sensor", DOMAIN, unique_id
+                )
+            )
+        ]
+        if not statistic_ids:
+            raise HomeAssistantError("No energy sensors are registered")
+        recorder.async_clear_statistics(statistic_ids)
 
 
 async def async_setup_entry(

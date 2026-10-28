@@ -18,6 +18,22 @@ from .coordinator import HyxiDmuCoordinator
 from .protocol import InverterReading
 
 
+def _monotonic_energy(
+    last: float | None, value: float | None
+) -> tuple[float | None, float | None]:
+    """Return a stable lifetime value and the value to remember next time.
+
+    A lifetime counter is only allowed to stay flat or increase.  The DMU
+    reports ``0`` for sleeping inverters, so treating that as a real reading
+    makes the Energy dashboard add the whole lifetime total the next morning.
+    """
+    if value is None or value <= 0:
+        return last, last
+    if last is not None and value < last:
+        return last, last
+    return value, value
+
+
 class _InverterSensor(CoordinatorEntity[HyxiDmuCoordinator], SensorEntity):
     """Base class for sensors that belong to one microinverter."""
 
@@ -81,12 +97,18 @@ class InverterEnergySensor(_InverterSensor):
         """Constructor."""
         super().__init__(coordinator, sn)
         self._attr_unique_id = f"{sn}_energy"
+        self._last_energy_kwh: float | None = None
 
     @property
     def native_value(self) -> float | None:
         """Lifetime energy, summed over the MPPTs."""
         reading = self._reading()
-        return None if reading is None else reading.energy_kwh
+        if reading is None:
+            return None
+        value, self._last_energy_kwh = _monotonic_energy(
+            self._last_energy_kwh, reading.energy_kwh
+        )
+        return value
 
 
 class _DmuSensor(CoordinatorEntity[HyxiDmuCoordinator], SensorEntity):
@@ -135,20 +157,31 @@ class DmuEnergySensor(_DmuSensor):
     _attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
     _attr_suggested_display_precision = 2
 
+    def __init__(
+        self, coordinator: HyxiDmuCoordinator, entry: ConfigEntry
+    ) -> None:
+        """Constructor."""
+        super().__init__(coordinator, entry)
+        self._last_energy_kwh: float | None = None
+
     @property
     def native_value(self) -> float | None:
-        """Sum the inverters' lifetime energy, or unknown without a snapshot.
+        """Sum the inverters' lifetime energy, never falling back to zero.
 
         A temporary ``0`` here looks like a counter reset to the Energy
         dashboard, which then adds the whole lifetime total again on the next
-        push.
+        push.  The DMU reports exactly that for sleeping inverters.
         """
         if not self.coordinator.data:
             return None
-        return round(
+        total = round(
             sum(inverter.energy_kwh for inverter in self.coordinator.data),
             3,
         )
+        value, self._last_energy_kwh = _monotonic_energy(
+            self._last_energy_kwh, total
+        )
+        return value
 
 
 async def async_setup_entry(
