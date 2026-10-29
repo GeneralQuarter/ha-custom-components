@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import time
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -16,6 +18,10 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN
 from .coordinator import HyxiDmuCoordinator
 from .protocol import InverterReading
+
+#: At startup the DMU can send one inverter first and the rest a moment later.
+#: Publishing that partial total would look like a huge lifetime increase.
+ENERGY_SETTLE_SECONDS = 120.0
 
 
 def _monotonic_energy(
@@ -163,6 +169,7 @@ class DmuEnergySensor(_DmuSensor):
         """Constructor."""
         super().__init__(coordinator, entry)
         self._last_energy_kwh: float | None = None
+        self._first_data_at: float | None = None
 
     @property
     def native_value(self) -> float | None:
@@ -174,6 +181,15 @@ class DmuEnergySensor(_DmuSensor):
         """
         if not self.coordinator.data:
             return None
+
+        now = time.monotonic()
+        if self._first_data_at is None:
+            self._first_data_at = now
+        if now - self._first_data_at < ENERGY_SETTLE_SECONDS:
+            # Wait for the DMU to list every inverter before publishing the
+            # aggregate; a one-inverter total would otherwise be a huge jump.
+            return self._last_energy_kwh
+
         total = round(
             sum(inverter.energy_kwh for inverter in self.coordinator.data),
             3,
